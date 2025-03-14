@@ -1,0 +1,68 @@
+name: stage3_aggregation_mse
+suffix: ~  # add suffix to saved images
+model_type: AdaptiveRefAggregationModel
+scale: 4
+crop_border: 4
+num_gpu: auto
+manual_seed: 10
+
+# datasets
+datasets:
+  test1:
+    name: CUFED_5ref
+    type: MultiRefCUFEDSet
+    dataroot_in: datasets/CUFED/test/CUFED5
+    dataroot_ref: datasets/CUFED/test/CUFED5
+
+val_func: BasicSRValidation
+save_img: true
+
+# network structures
+network_extractor:
+  type: ContrasMultiExtractorSep
+
+network_rrdb:
+  type: RRDBNet
+
+network_map:
+  type: CorrespondenceGenerationArch
+  patch_size: 3
+  stride: 1
+  topk: 3
+  vgg_layer_list: ['relu1_1', 'relu2_1', 'relu3_1']
+  vgg_type: 'vgg19'
+
+network_mask:
+  type: RefMaskCalculate
+  shreshold: 0.3
+  fixk: 1
+
+network_alignment:
+  type: ResblockAlignmentNet
+  ngf: 64
+  groups: 8
+  n_blocks: 16
+
+network_g:
+  type: AdaptiveAggregationNet
+  ngf: 64
+  ref_ngf: 64
+  n_blocks: 16
+
+network_adamatcher:
+  type: RefInteractionNet
+  d_model: 256
+  initial_dim: 128
+  block_dims: [128, 196, 256]
+  resolution: (32, 8, 2)
+
+# path
+path:
+  pretrain_network_feature_extractor: /home/haida/zk/AdaRef/pretrained_models/feature_extraction.pth
+  pretrain_network_rrdb: /home/haida/zk/AdaRef/pretrained_models/RRDB_PSNR_x4.pth
+  pretrain_network_alignment: /home/haida/zk/AdaRef/pretrained_models/net_align_contras.pth
+  pretrain_network_g: /home/haida/zk/AdaRef/pretrained_models/net_agg_contras.pth
+  pretrain_network_adamatcher: /home/haida/zk/AdaRef/pretrained_models/adamatcher.ckpt
+  pretrain_network_d: ~
+  strict_load: true
+  resume_state: ~
