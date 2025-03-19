@@ -43,8 +43,8 @@ This is the implementation of paper: Reference-Based Super-Resolution with Geome
 
 ### Dataset Preparation
 
-- Train Set: [CUFED](https://github.com/ZZUTK/SRNTT) Dataset
-- Test Sets:  CUFED5 Dataset, WR-SR Dataset, LMR Dataset, SUN80 Dataset
+- Train Set: [CUFED5](https://github.com/ZZUTK/SRNTT) Dataset
+- Test Sets:  [CUFED5](https://github.com/ZZUTK/SRNTT) Dataset, [WR-SR](https://github.com/yumingj/C2-Matching) Dataset, [LMR](https://github.com/wdmwhh/MRefSR) Dataset
 
 ---
 
