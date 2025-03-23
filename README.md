@@ -6,7 +6,7 @@ This is the implementation of paper: Reference-Based Super-Resolution with Geome
 
 ---
 
-### The Framework of the Proposed GeoRef
+### Overview Framework
 
 ![framework](img/framework.jpg)
 
@@ -40,6 +40,10 @@ This is the implementation of paper: Reference-Based Super-Resolution with Geome
    cd basicsr/archs/ddf
    python setup.py build develop
    ```
+
+4. Dependent Models
+   - [RRDB](https://github.com/xinntao/ESRGAN) (for single image super resolution)
+   - [Adamatcher](https://github.com/AbyssGaze/AdaMatcher) (for co-visible segementation)
 
 ### Dataset Preparation
 
@@ -87,7 +91,7 @@ The results will be saved in ./result
 
 #### Acknowledgement
 
-We appreciate the great work of [C2-Matching](https://github.com/yumingj/C2-Matching), [MRefSR](https://github.com/wdmwhh/MRefSR), [DATSR](https://github.com/caojiezhang/DATSR), RRSR, [MASA](https://github.com/dvlab-research/MASA-SR), [RefDiff](https://github.com/dongrunmin/RefDiff), etc. Please refer to the original repo for more usage and documents. The complete code will be released later.
+We appreciate the great work of [*C*^2^-Matching](https://github.com/yumingj/C2-Matching), [MRefSR](https://github.com/wdmwhh/MRefSR), [DATSR](https://github.com/caojiezhang/DATSR), RRSR, [MASA](https://github.com/dvlab-research/MASA-SR), [RefDiff](https://github.com/dongrunmin/RefDiff), etc. Please refer to the original repo for more usage and documents. The complete code will be released later.
 
 
 
