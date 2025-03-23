@@ -42,7 +42,7 @@ This is the implementation of paper: Reference-Based Super-Resolution with Geome
    ```
 
 4. Dependent Models
-   - [RRDB](https://github.com/xinntao/ESRGAN) (for single image super resolution)
+   - [RRDB](https://github.com/xinntao/ESRGAN) (for single image super-resolution)
    - [Adamatcher](https://github.com/AbyssGaze/AdaMatcher) (for co-visible segementation)
 
 ### Dataset Preparation
