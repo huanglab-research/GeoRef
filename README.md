@@ -91,7 +91,7 @@ The results will be saved in ./result
 
 #### Acknowledgement
 
-We appreciate the great work of [*C*^2^-Matching](https://github.com/yumingj/C2-Matching), [MRefSR](https://github.com/wdmwhh/MRefSR), [DATSR](https://github.com/caojiezhang/DATSR), RRSR, [MASA](https://github.com/dvlab-research/MASA-SR), [RefDiff](https://github.com/dongrunmin/RefDiff), etc. Please refer to the original repo for more usage and documents. The complete code will be released later.
+We appreciate the great work of [*C*2 -Matching](https://github.com/yumingj/C2-Matching), [MRefSR](https://github.com/wdmwhh/MRefSR), [DATSR](https://github.com/caojiezhang/DATSR), RRSR, [MASA](https://github.com/dvlab-research/MASA-SR), [RefDiff](https://github.com/dongrunmin/RefDiff), etc. Please refer to the original repo for more usage and documents. The complete code will be released later.
 
 
 
