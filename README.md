@@ -96,6 +96,7 @@ We appreciate the great work of [*C*2 -Matching](https://github.com/yumingj/C2-M
 #### Contact
 
 Feel free to contact me if there is any question. (Ke Zhang: [itzhangke@stu.ouc.edu.cn](mailto:itzhangke@stu.ouc.edu.cn), Lei Huang: [huangl@ouc.edu.cn](mailto:huangl@ouc.edu.cn))
+
 Note: The source code is currently incomplete and will be fully released once the manuscript is accepted by the journal.
 
 
