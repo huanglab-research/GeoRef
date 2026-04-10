@@ -1,6 +1,6 @@
-name: stage3_aggregation_mse
+name: stage3_aggregation_gan
 suffix: ~  # add suffix to saved images
-model_type: AdaptiveRefAggregationModel
+model_type: RefAggregationModel
 scale: 4
 crop_border: 4
 num_gpu: auto
@@ -58,11 +58,11 @@ network_adamatcher:
 
 # path
 path:
-  pretrain_network_feature_extractor: /home/haida/zk/AdaRef/pretrained_models/feature_extraction.pth
-  pretrain_network_rrdb: /home/haida/zk/AdaRef/pretrained_models/RRDB_PSNR_x4.pth
-  pretrain_network_alignment: /home/haida/zk/AdaRef/pretrained_models/net_align_contras.pth
-  pretrain_network_g: /home/haida/zk/AdaRef/pretrained_models/net_agg_contras.pth
-  pretrain_network_adamatcher: /home/haida/zk/AdaRef/pretrained_models/adamatcher.ckpt
+  pretrain_network_feature_extractor: pretrained_models/feature_extraction.pth
+  pretrain_network_rrdb: pretrained_models/RRDB_PSNR_x4.pth
+  pretrain_network_alignment: pretrained_models/net_alignment_HR.pth
+  pretrain_network_g: pretrained_models/net_agg_gan.pth
+  pretrain_network_adamatcher: pretrained_models/adamatcher.ckpt
   pretrain_network_d: ~
   strict_load: true
   resume_state: ~

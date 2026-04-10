@@ -1,6 +1,6 @@
-name: stage3_aggregation_gan
+name: stage3_aggregation_mse
 suffix: ~  # add suffix to saved images
-model_type: AdaptiveRefAggregationModel
+model_type: RefAggregationModel
 scale: 4
 crop_border: 4
 num_gpu: auto
@@ -28,7 +28,7 @@ network_map:
   type: CorrespondenceGenerationArch
   patch_size: 3
   stride: 1
-  topk: 2
+  topk: 3
   vgg_layer_list: ['relu1_1', 'relu2_1', 'relu3_1']
   vgg_type: 'vgg19'
 
@@ -44,7 +44,7 @@ network_alignment:
   n_blocks: 16
 
 network_g:
-  type: AdaptiveAggregation_T_Net
+  type: AdaptiveAggregationNet
   ngf: 64
   ref_ngf: 64
   n_blocks: 16
@@ -62,6 +62,7 @@ path:
   pretrain_network_rrdb: pretrained_models/RRDB_PSNR_x4.pth
   pretrain_network_alignment: pretrained_models/net_alignment_HR.pth
   pretrain_network_g: pretrained_models/net_agg_mse.pth
+  pretrain_network_adamatcher: pretrained_models/adamatcher.ckpt
   pretrain_network_d: ~
   strict_load: true
   resume_state: ~

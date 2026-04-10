@@ -202,7 +202,10 @@ class RefAlignmentModel(BaseModel):
                 weight_decay=weight_decay_d,
                 betas=train_opt['beta_d'])
             self.optimizers.append(self.optimizer_d)
-        self.is_rrsr = train_opt['add_rrsr']
+
+        self.margin = train_opt['margin']
+        self.is_contras = train_opt['add_contras']
+        self.contras_weight = train_opt['contras_weight']
 
         # check the schedulers
         self.setup_schedulers()
@@ -214,10 +217,6 @@ class RefAlignmentModel(BaseModel):
         self.img_ref = data['img_ref'].to(self.device)
         self.gt = data['img_in'].to(self.device)  # gt
         self.match_img_in = data['img_in_up'].to(self.device)
-        if train:
-            self.img_ref_hrp = data['img_ref_hrp'].to(self.device)
-            self.img_ref_hrp_lq = data['img_ref_hrp_lq'].to(self.device)
-            self.match_img_ref_hrp = data['img_ref_hrp_up'].to(self.device)
 
     def optimize_parameters(self, step):
         self.sife, self.sisr_in = self.net_rrdb(self.img_in_lq)
@@ -225,93 +224,41 @@ class RefAlignmentModel(BaseModel):
         self.pre_flow, self.pre_offset, self.pre_sim, self.img_ref_feat = self.net_map(
                 self.features, self.img_ref)
         self.output, self.mid_ref_feat = self.net_g(self.sisr_in, self.sife, self.pre_offset[0], self.pre_flow[0], None, self.img_ref_feat)
+        if self.is_contras:
+            self.features_p = self.net_extractor(self.match_img_in, self.gt)
+            self.pre_flow_p, self.pre_offset_p, self.pre_sim_p, self.img_gt_feat = self.net_map(self.features_p, self.gt)
+            self.pre_flow_n, self.pre_offset_n, self.pre_sim_n, self.img_up_feat = self.net_map(self.features_p, self.match_img_in)
+
+            self.output_p, self.mid_ref_feat_p = self.net_g(self.sisr, self.sife, self.pre_offset_p[0], self.pre_flow_p[0], None, self.img_gt_feat)
+            self.output_n, self.mid_ref_feat_n = self.net_g(self.sisr, self.sife, self.pre_offset_p[0], self.pre_flow_p[0], None, self.img_up_feat)
 
 
 
-        if step <= self.net_g_pretrain_steps:
-            # pretrain the net_g with pixel Loss
-            self.optimizer_g.zero_grad()
-            l_pix = self.cri_pix(self.output, self.gt)
-            # set log
-            self.log_dict['l_pix'] = l_pix.item()
-            l_total = l_pix
-            # ref_hrp pix loss
-            if self.is_rrsr:
-                l_pix_ref_hrp = self.cri_pix(out_ref_hrp, self.img_ref_hrp)
-                self.log_dict['l_pix_ref_hrp'] = l_pix_ref_hrp.item()
-                l_total += l_pix_ref_hrp * 0.6
-            l_total.backward()
-            self.optimizer_g.step()
+        self.optimizer_g.zero_grad()
+        l_g_total = 0
+        l_pix = self.cri_pix(self.output, self.gt)
+        # set log
+        self.log_dict['l_pix'] = l_pix.item()
+        l_g_total += l_pix
+
+        contras_loss, pos_dist, neg_dist = self.contras_loss()
+        if torch.isnan(contras_loss) or torch.isinf(contras_loss):
+            contras_valid = False
         else:
-            if self.net_d:
-                # train net_d
-                self.optimizer_d.zero_grad()
-                for p in self.net_d.parameters():
-                    p.requires_grad = True
+            contras_valid = True
+        self.log_dict['contras_loss'] = contras_loss.item() if contras_valid else 0.0
+        self.log_dict['pos_dist'] = pos_dist
+        self.log_dict['neg_dist'] = neg_dist
+        if contras_valid:
+            l_g_total += contras_loss * self.contras_weight
 
-                # compute WGAN loss
-                real_d_pred = self.net_d(self.gt)
-                l_d_real = self.cri_gan(real_d_pred, True, is_disc=True)
-                self.log_dict['l_d_real'] = l_d_real.item()
-                self.log_dict['out_d_real'] = torch.mean(real_d_pred.detach())
-                # fake
-                fake_d_pred = self.net_d(self.output.detach())
-                l_d_fake = self.cri_gan(fake_d_pred, False, is_disc=True)
-                self.log_dict['l_d_fake'] = l_d_fake.item()
-                self.log_dict['out_d_fake'] = torch.mean(fake_d_pred.detach())
-                l_d_total = l_d_real + l_d_fake
-                if self.cri_grad_penalty:
-                    l_grad_penalty = self.cri_grad_penalty(
-                        self.net_d, self.gt, self.output)
-                    self.log_dict['l_grad_penalty'] = l_grad_penalty.item()
-                    l_d_total += l_grad_penalty
-                l_d_total.backward()
-                self.optimizer_d.step()
-
-            # train net_g
-            self.optimizer_g.zero_grad()
-            if self.net_d:
-                for p in self.net_d.parameters():
-                    p.requires_grad = False
-
-            l_g_total = 0
-            if (step - self.net_g_pretrain_steps) % self.net_d_steps == 0 and (
-                    step - self.net_g_pretrain_steps) > self.net_d_init_steps:
-                if self.cri_pix:
-                    l_g_pix = self.cri_pix(self.output, self.gt)
-                    l_g_total += l_g_pix
-                    self.log_dict['l_g_pix'] = l_g_pix.item()
-                if self.cri_perceptual:
-                    l_g_percep, _ = self.cri_perceptual(self.output, self.gt)
-                    l_g_total += l_g_percep
-                    self.log_dict['l_g_percep'] = l_g_percep.item()
-                if self.cri_style:
-                    _, l_g_style = self.cri_style(self.output, self.gt)
-                    l_g_total += l_g_style
-                    self.log_dict['l_g_style'] = l_g_style.item()
-                if self.cri_texture:
-                    l_g_texture = self.cri_texture(self.output, self.maps,
-                                                   self.weights)
-                    l_g_total += l_g_texture
-                    self.log_dict['l_g_texture'] = l_g_texture.item()
-                if self.net_d:
-                    # gan loss
-                    fake_g_pred = self.net_d(self.output)
-                    l_g_gan = self.cri_gan(fake_g_pred, True, is_disc=False)
-                    l_g_total += l_g_gan
-                    self.log_dict['l_g_gan'] = l_g_gan.item()
-
-                # ref_hrp pix loss
-                if self.is_rrsr:
-                    l_g_pix_ref_hrp = self.cri_pix(out_ref_hrp, self.img_ref_hrp)
-                    self.log_dict['l_g_pix_ref_hrp'] = l_g_pix_ref_hrp.item()
-                    l_g_total += l_g_pix_ref_hrp * 0.6
-
-                l_g_total.backward()
-                self.optimizer_g.step()
+        l_g_total.backward()
+        self.optimizer_g.step()
 
     def test(self):
         self.net_g.eval()
+        self.net_rrdb.eval()
+        self.net_extractor.eval()
         with torch.no_grad():
             self.sife, self.sisr_in = self.net_rrdb(self.img_in_lq)
             self.features = self.net_extractor(self.match_img_in, self.img_ref)

@@ -1,5 +1,5 @@
 name: stage2_alignment_HR_oriented
-model_type: RefAlignmentContrastModel
+model_type: RefAlignmentModel
 scale: 4
 crop_border: 4
 num_gpu: 4
@@ -83,6 +83,10 @@ train:
 
   pixel_criterion: L1Loss
   pixel_weight: !!float 1.0
+
+  margin: 1.0
+  add_contras: true
+  contras_weight: 0.1
 
 val:
   val_freq: !!float 5e3

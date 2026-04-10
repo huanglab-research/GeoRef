@@ -1,5 +1,5 @@
-name: stage1_alignment
-model_type: AdaptiveRefAggregationModel
+name: stage3_aggregation_mse
+model_type: RefAggregationModel
 scale: 4
 crop_border: 4
 num_gpu: 4
@@ -74,6 +74,7 @@ path:
   pretrain_network_feature_extractor: pretrained_models/feature_extraction.pth
   pretrain_network_rrdb: pretrained_models/RRDB_PSNR_x4.pth
   pretrain_network_alignment: pretrained_models/net_alignment_HR.pth
+  pretrain_network_adamatcher: pretrained_models/adamatcher.ckpt
   pretrain_network_g: ~
   pretrain_network_d: ~
   strict_load: true

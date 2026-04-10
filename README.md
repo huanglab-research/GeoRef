@@ -79,25 +79,15 @@ The results will be saved in ./result
 
 #### Quantitative Comparison
 
-![Quantitative](img/Quantitative.jpg)
+![Quantitative](img/quantitative.jpg)
 
 #### Qualitative Comparison
 
-![gan_losses](img/gan_losses.jpg)
-
-![rec_loss](img/rec_loss.jpg)
+![gan_losses](img/visual.jpg)
 
 ---
 
 #### Acknowledgement
 
 We appreciate the great work of [*C*2 -Matching](https://github.com/yumingj/C2-Matching), [MRefSR](https://github.com/wdmwhh/MRefSR), [DATSR](https://github.com/caojiezhang/DATSR), RRSR, [MASA](https://github.com/dvlab-research/MASA-SR), [RefDiff](https://github.com/dongrunmin/RefDiff), etc. Please refer to the original repo for more usage and documents. 
-
-#### Contact
-
-Feel free to contact me if there is any question. (Ke Zhang: [itzhangke@stu.ouc.edu.cn](mailto:itzhangke@stu.ouc.edu.cn), Lei Huang: [huangl@ouc.edu.cn](mailto:huangl@ouc.edu.cn))
-
-Note: The source code is currently incomplete and will be fully released once the manuscript is accepted by the journal.
-
-
 

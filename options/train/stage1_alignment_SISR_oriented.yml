@@ -1,5 +1,5 @@
 name: stage1_alignment_SISR_oriented
-model_type: RefSISRAggregationModel
+model_type: RefAlignmentModel
 scale: 4
 crop_border: 4
 num_gpu: 4
@@ -74,7 +74,7 @@ train:
 
   scheduler:
     type: MultiStepLR
-    milestones: [72545, 17545]
+    milestones: [75000, 170000]
     gamma: 0.1
 
   total_iter: 200000
