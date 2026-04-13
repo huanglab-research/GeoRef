@@ -27,24 +27,17 @@ def sample_patches(inputs, patch_size=3, stride=1, padding=0):
     return patches
 
 def conv2d_with_einsum(feat_input, batch, patch_size=3, stride=1, padding=1):
-    # 输入维度: feat_input [channel, h, w]， batch [channel, 3, 3, n]
 
-    # 将输入特征图进行展开，展平为滑动窗口形式
     feat_input_unfold_1 = F.unfold(feat_input.unsqueeze(0), kernel_size=patch_size, stride=stride, padding=padding)
     feat_input_unfold = sample_patches(feat_input, patch_size, stride, padding)
     feat_input_unfold = feat_input_unfold.reshape(-1, feat_input_unfold.shape[3]).unsqueeze(0)
-    # 现在 feat_input_unfold 形状是 [1, channel*3*3, h*w]，表示每个 3x3 窗口展平后的特征
 
-    # 将 batch 特征块展平，形状变为 [n, channel*3*3]
     batch_flat = batch.reshape(batch.shape[3], -1)  # [n, channel*3*3]
 
 
-    # 使用 einsum 进行点积，等价于卷积操作
-    # einsum 表达式含义: 对于 batch_flat 的每个 n 特征块，与 feat_input_unfold 的每个 [channel*3*3] 位置点积
     corr = torch.einsum('nc,bch->bnh', batch_flat, feat_input_unfold)
 
 
-    # reshape 结果，使其与卷积后的形状一致 [1, n, h, w]
     h, w = feat_input.shape[1], feat_input.shape[2]
     corr = corr.view(1, batch.shape[3], h, w)
 
