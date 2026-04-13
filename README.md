@@ -94,7 +94,7 @@ We appreciate the great work of [*C*2 -Matching](https://github.com/yumingj/C2-M
 #### Cite
 
 ```
-@ARTICLE{zhang2026reference,
+@ARTICLE{zhangreference,
   author={Zhang, Ke and Huang, Lei and Nie, Jie and Huo, Yadong and Du, Jin and Wei, Zhiqiang},
   journal={IEEE Transactions on Circuits and Systems for Video Technology}, 
   title={Reference-Based Super-Resolution with Geometry-Aware Transfer}, 
